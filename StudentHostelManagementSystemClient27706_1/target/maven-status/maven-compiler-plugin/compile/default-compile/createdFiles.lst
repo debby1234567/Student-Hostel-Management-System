@@ -6,6 +6,7 @@ view\StudentForm$4.class
 view\PaymentForm$3.class
 model\Student.class
 view\ReportsForm.class
+view\UiUtil.class
 view\BookingForm$3.class
 view\ReportsForm$4.class
 view\StudentForm.class
@@ -47,6 +48,7 @@ com\mycompany\studenthostelmanagementclient27706\StudentHostelManagementClient27
 view\StaffForm$2.class
 controller\LoginController.class
 view\ReportsForm$2.class
+view\StudentRegistrationDialog$1.class
 view\LoginForm$3.class
 view\BookingForm$6.class
 view\PaymentForm$1.class
@@ -61,3 +63,4 @@ view\RoomForm$2.class
 view\BookingForm.class
 view\StudentForm$5.class
 view\StaffForm$3.class
+view\StudentRegistrationDialog.class

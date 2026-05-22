@@ -38,7 +38,7 @@ public class BookingForm extends JFrame {
 
     private void initUI() {
         setTitle("Booking Management");
-        setSize(1050, 600);
+        UiUtil.configureFrame(this, 1050, 600, 840, 480);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 

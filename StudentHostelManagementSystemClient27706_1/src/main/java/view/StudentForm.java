@@ -28,6 +28,8 @@ public class StudentForm extends JFrame {
     // Track selected row's DB id
     private Long selectedDbId = null;
 
+    private boolean addingNew = true;
+
     public StudentForm() {
         initUI();
         loadStudents();
@@ -35,7 +37,7 @@ public class StudentForm extends JFrame {
 
     private void initUI() {
         setTitle("Student Management");
-        setSize(1000, 640);
+        UiUtil.configureFrame(this, 1000, 640, 800, 500);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -218,34 +220,64 @@ public class StudentForm extends JFrame {
     }
 
     private void doAdd() {
+        addingNew = true;
         if (!validateForm()) return;
         Student s = buildStudentFromForm(null);
+        setFormEnabled(false);
         SwingWorker<Boolean, Void> w = new SwingWorker<>() {
             protected Boolean doInBackground() throws Exception { return controller.addStudent(s); }
             protected void done() {
+                setFormEnabled(true);
                 try {
-                    if (get()) { showStatus("Student added successfully.", true); clearForm(); loadStudents(); }
-                    else         showStatus("Failed to add student.", false);
-                } catch (Exception ex) { showStatus("Error: " + ex.getMessage(), false); }
+                    if (get()) {
+                        showStatus("Student added successfully.", true);
+                        clearForm();
+                        loadStudents();
+                    } else {
+                        showStatus("Failed to add student.", false);
+                    }
+                } catch (Exception ex) {
+                    String msg = ex.getMessage() != null ? ex.getMessage() : "Could not add student.";
+                    showStatus("Error: " + msg, false);
+                    JOptionPane.showMessageDialog(StudentForm.this, msg, "Add Student", JOptionPane.ERROR_MESSAGE);
+                }
             }
         };
         w.execute();
     }
 
     private void doUpdate() {
+        addingNew = false;
         if (selectedDbId == null) { showStatus("Select a student to update.", false); return; }
         if (!validateForm()) return;
         Student s = buildStudentFromForm(selectedDbId);
+        setFormEnabled(false);
         SwingWorker<Boolean, Void> w = new SwingWorker<>() {
             protected Boolean doInBackground() throws Exception { return controller.updateStudent(s); }
             protected void done() {
+                setFormEnabled(true);
                 try {
                     if (get()) { showStatus("Student updated.", true); loadStudents(); }
                     else         showStatus("Update failed.", false);
-                } catch (Exception ex) { showStatus("Error: " + ex.getMessage(), false); }
+                } catch (Exception ex) {
+                    String msg = ex.getMessage() != null ? ex.getMessage() : "Could not update student.";
+                    showStatus("Error: " + msg, false);
+                    JOptionPane.showMessageDialog(StudentForm.this, msg, "Update Student", JOptionPane.ERROR_MESSAGE);
+                }
             }
         };
         w.execute();
+    }
+
+    private void setFormEnabled(boolean enabled) {
+        studentIdField.setEnabled(enabled);
+        firstNameField.setEnabled(enabled);
+        lastNameField.setEnabled(enabled);
+        emailField.setEnabled(enabled);
+        phoneField.setEnabled(enabled);
+        nationalIdField.setEnabled(enabled);
+        passwordField.setEnabled(enabled);
+        genderCombo.setEnabled(enabled);
     }
 
     private void doDelete() {
@@ -293,21 +325,30 @@ public class StudentForm extends JFrame {
             showStatus("Please fill in all required (*) fields.", false);
             return false;
         }
+        String email = emailField.getText().trim();
+        if (!email.contains("@") || !email.contains(".")) {
+            showStatus("Please enter a valid email address.", false);
+            return false;
+        }
+        if (addingNew && passwordField.getText().trim().isEmpty()) {
+            showStatus("Password is required for new students.", false);
+            return false;
+        }
         return true;
     }
 
     private Student buildStudentFromForm(Long id) {
-       return new Student(id,
-    studentIdField.getText().trim(),
-    firstNameField.getText().trim(),
-    lastNameField.getText().trim(),
-    emailField.getText().trim(),
-    phoneField.getText().trim(),
-    (String) genderCombo.getSelectedItem(),
-    nationalIdField.getText().trim(),
-    passwordField.getText().isEmpty() ? null : passwordField.getText(),
-    true     
-);
+        return new Student(id,
+            studentIdField.getText().trim(),
+            firstNameField.getText().trim(),
+            lastNameField.getText().trim(),
+            emailField.getText().trim(),
+            UiUtil.blankToNull(phoneField.getText()),
+            (String) genderCombo.getSelectedItem(),
+            UiUtil.blankToNull(nationalIdField.getText()),
+            passwordField.getText().trim().isEmpty() ? null : passwordField.getText().trim(),
+            true
+        );
     }
 
     private void clearForm() {
@@ -320,7 +361,7 @@ public class StudentForm extends JFrame {
     }
 
     private void showStatus(String msg, boolean ok) {
-        statusLabel.setForeground(ok ? new Color(30, 140, 60) : new Color(200, 50, 50));
+        statusLabel.setForeground(ok ? UiUtil.SUCCESS : UiUtil.ERROR);
         statusLabel.setText(msg);
     }
 

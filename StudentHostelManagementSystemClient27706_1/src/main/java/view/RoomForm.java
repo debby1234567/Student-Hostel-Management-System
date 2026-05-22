@@ -27,7 +27,7 @@ public class RoomForm extends JFrame {
 
     private void initUI() {
         setTitle("Room Management");
-        setSize(950, 580);
+        UiUtil.configureFrame(this, 950, 580, 760, 460);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 

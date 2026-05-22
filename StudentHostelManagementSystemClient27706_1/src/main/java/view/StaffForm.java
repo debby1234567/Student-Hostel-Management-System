@@ -28,7 +28,7 @@ public class StaffForm extends JFrame {
 
     private void initUI() {
         setTitle("Staff Management");
-        setSize(1000, 600);
+        UiUtil.configureFrame(this, 1000, 600, 800, 480);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 

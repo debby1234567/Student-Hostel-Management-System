@@ -33,7 +33,7 @@ public class PaymentForm extends JFrame {
 
     private void initUI() {
         setTitle("Payment Management");
-        setSize(1000, 580);
+        UiUtil.configureFrame(this, 1000, 580, 800, 460);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 

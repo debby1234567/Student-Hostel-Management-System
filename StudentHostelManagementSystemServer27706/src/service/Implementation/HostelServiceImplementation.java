@@ -89,11 +89,13 @@ public class HostelServiceImplementation extends UnicastRemoteObject implements 
     @Override
     public boolean addStudent(Student student) throws RemoteException {
         try {
+            prepareStudentForPersist(student, true);
             if (studentDAO.existsByEmail(student.getEmail()))
                 throw new RemoteException("A student with this email already exists.");
             if (studentDAO.existsByStudentId(student.getStudentId()))
                 throw new RemoteException("Student ID already registered.");
-            if (studentDAO.existsByNationalId(student.getNationalId()))
+            String nationalId = student.getNationalId();
+            if (nationalId != null && studentDAO.existsByNationalId(nationalId))
                 throw new RemoteException("National ID already registered.");
             studentDAO.save(student);
             return true;
@@ -107,8 +109,12 @@ public class HostelServiceImplementation extends UnicastRemoteObject implements 
     @Override
     public boolean updateStudent(Student student) throws RemoteException {
         try {
-            if (studentDAO.findById(student.getId()) == null)
+            Student existing = studentDAO.findById(student.getId());
+            if (existing == null)
                 throw new RemoteException("Student not found.");
+            prepareStudentForPersist(student, false);
+            if (student.getPassword() == null || student.getPassword().isEmpty())
+                student.setPassword(existing.getPassword());
             studentDAO.update(student);
             return true;
         } catch (RemoteException re) {
@@ -414,5 +420,35 @@ public class HostelServiceImplementation extends UnicastRemoteObject implements 
     public List<Student> getStudentReport() throws RemoteException {
         try { return studentDAO.findAll(); }
         catch (Exception e) { throw new RemoteException(e.getMessage(), e); }
+    }
+
+    private static void prepareStudentForPersist(Student student, boolean isNew) throws RemoteException {
+        if (student.getEmail() != null)
+            student.setEmail(student.getEmail().trim());
+        if (student.getStudentId() != null)
+            student.setStudentId(student.getStudentId().trim());
+        if (student.getFirstName() != null)
+            student.setFirstName(student.getFirstName().trim());
+        if (student.getLastName() != null)
+            student.setLastName(student.getLastName().trim());
+
+        String phone = student.getPhoneNumber();
+        if (phone != null) {
+            phone = phone.trim();
+            student.setPhoneNumber(phone.isEmpty() ? null : phone);
+        }
+
+        String nid = student.getNationalId();
+        if (nid != null) {
+            nid = nid.trim();
+            student.setNationalId(nid.isEmpty() ? null : nid);
+        }
+
+        if (isNew) {
+            if (student.getPassword() == null || student.getPassword().trim().isEmpty())
+                throw new RemoteException("Password is required.");
+            student.setPassword(student.getPassword().trim());
+            student.setActive(true);
+        }
     }
 }

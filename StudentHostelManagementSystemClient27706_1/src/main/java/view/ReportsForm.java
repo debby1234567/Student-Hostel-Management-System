@@ -35,7 +35,7 @@ public class ReportsForm extends JFrame {
 
     private void initUI() {
         setTitle("Reports");
-        setSize(900, 560);
+        UiUtil.configureFrame(this, 900, 560, 720, 440);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 

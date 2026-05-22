@@ -44,11 +44,10 @@ public class LoginForm extends JFrame {
     // ── UI construction ───────────────────────────────────────────────────
  
     private void initUI() {
-        setTitle("Hostel Management – Login");
-        setSize(440, 540);
+        setTitle("Hostel Management - Login");
+        UiUtil.configureFrame(this, 440, 540, 380, 480);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setResizable(false);
  
         JPanel root = new JPanel(new CardLayout());
         root.setBackground(new Color(240, 244, 250));
@@ -106,7 +105,7 @@ public class LoginForm extends JFrame {
         registerBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         registerBtn.setFont(new Font("SansSerif", Font.PLAIN, 12));
         registerBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        registerBtn.addActionListener(e -> new StudentForm().setVisible(true));
+        registerBtn.addActionListener(e -> new StudentRegistrationDialog(this).setVisible(true));
  
         KeyAdapter enter = new KeyAdapter() {
             public void keyPressed(KeyEvent e) {

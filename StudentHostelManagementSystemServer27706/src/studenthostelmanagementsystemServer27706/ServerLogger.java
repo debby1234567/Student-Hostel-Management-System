@@ -64,9 +64,9 @@ public class ServerLogger {
         print("AUTH ", CYAN, message);
     }
 
-    /** Separator line — useful between startup sections */
+    /** Separator line — useful between startup sections (ASCII for Windows console). */
     public static void separator() {
-        System.out.println("─────────────────────────────────────────────────────");
+        System.out.println("-----------------------------------------------------");
     }
 
     // ── Private ───────────────────────────────────────────────────────────

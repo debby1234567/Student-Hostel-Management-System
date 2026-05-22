@@ -20,7 +20,7 @@ public class ReportExporter {
             for (Student s : students) {
                 XSSFRow row = sheet.createRow(rowNum++);
                 row.createCell(0).setCellValue(s.getStudentId());
-                row.createCell(1).setCellValue(s.getName());
+                row.createCell(1).setCellValue(s.getFullName());
                 row.createCell(2).setCellValue(s.getEmail());
             }
             try (FileOutputStream out = new FileOutputStream(path)) {

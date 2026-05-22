@@ -20,10 +20,9 @@ public class MainDashboard extends JFrame {
 
     private void initUI() {
         setTitle("Student Hostel Management System");
-        setSize(900, 600);
+        UiUtil.configureFrame(this, 900, 600, 720, 480);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setResizable(false);
 
         // ── Header bar ───────────────────────────────────────────────────
         JPanel header = new JPanel(new BorderLayout());
