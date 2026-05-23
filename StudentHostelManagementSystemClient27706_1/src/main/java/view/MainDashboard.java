@@ -3,20 +3,16 @@ package view;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * Main dashboard shown after successful login.
- * Provides navigation to all management modules.
- */
 public class MainDashboard extends JFrame {
 
     private final String loggedInUser;
     private final String userRole;
 
     public MainDashboard(String email, String role) {
-    this.loggedInUser = email;
-    this.userRole     = role;
-    initUI();            
-}    
+        this.loggedInUser = email;
+        this.userRole = role;
+        initUI();
+    }
 
     private void initUI() {
         setTitle("Student Hostel Management System");
@@ -24,7 +20,6 @@ public class MainDashboard extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // ── Header bar ───────────────────────────────────────────────────
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(new Color(30, 58, 95));
         header.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
@@ -33,7 +28,8 @@ public class MainDashboard extends JFrame {
         title.setForeground(Color.WHITE);
         title.setFont(new Font("SansSerif", Font.BOLD, 20));
 
-        JLabel userLabel = new JLabel("Logged in as: " + loggedInUser + "   ");
+        JLabel userLabel = new JLabel(
+                "Logged in as: " + loggedInUser + "  |  Role: " + userRole + "   ");
         userLabel.setForeground(new Color(180, 210, 240));
         userLabel.setFont(new Font("SansSerif", Font.PLAIN, 13));
 
@@ -54,22 +50,70 @@ public class MainDashboard extends JFrame {
         header.add(title, BorderLayout.WEST);
         header.add(rightPanel, BorderLayout.EAST);
 
-        // ── Module grid ───────────────────────────────────────────────────
-        JPanel grid = new JPanel(new GridLayout(2, 3, 20, 20));
+        boolean isStudent = "Student".equalsIgnoreCase(userRole);
+
+        JPanel grid = new JPanel(new GridLayout(
+                isStudent ? 1 : 2,
+                3,
+                20,
+                20
+        ));
+
         grid.setBackground(new Color(240, 244, 250));
         grid.setBorder(BorderFactory.createEmptyBorder(40, 50, 40, 50));
 
-        grid.add(makeCard("👩‍🎓  Students",    "Manage student records",       new Color(52, 152, 219),  () -> new StudentForm().setVisible(true)));
-        grid.add(makeCard("🛏  Rooms",         "View & manage hostel rooms",    new Color(46, 204, 113),  () -> new RoomForm().setVisible(true)));
-        grid.add(makeCard("📋  Bookings",      "Create & track bookings",       new Color(155, 89, 182),  () -> new BookingForm().setVisible(true)));
-        grid.add(makeCard("💳  Payments",      "Record & view payments",        new Color(230, 126, 34),  () -> new PaymentForm().setVisible(true)));
-        grid.add(makeCard("👥  Staff",         "Manage staff members",          new Color(231, 76, 60),   () -> new StaffForm().setVisible(true)));
-        grid.add(makeCard("📊  Reports",       "Export system reports",         new Color(22, 160, 133),  () -> new ReportsForm().setVisible(true)));
+        if (isStudent) {
+            grid.add(makeCard("🛏  Rooms",
+                    "View available hostel rooms",
+                    new Color(46, 204, 113),
+                    () -> new RoomForm().setVisible(true)));
 
-        // ── Status bar ────────────────────────────────────────────────────
+            grid.add(makeCard("📋  Bookings",
+                    "Create and view your bookings",
+                    new Color(155, 89, 182),
+                    () -> new BookingForm().setVisible(true)));
+
+            grid.add(makeCard("💳  Payments",
+                    "View or make your payments",
+                    new Color(230, 126, 34),
+                    () -> new PaymentForm().setVisible(true)));
+
+        } else {
+            grid.add(makeCard("👩‍🎓  Students",
+                    "Manage student records",
+                    new Color(52, 152, 219),
+                    () -> new StudentForm().setVisible(true)));
+
+            grid.add(makeCard("🛏  Rooms",
+                    "View & manage hostel rooms",
+                    new Color(46, 204, 113),
+                    () -> new RoomForm().setVisible(true)));
+
+            grid.add(makeCard("📋  Bookings",
+                    "Create & track bookings",
+                    new Color(155, 89, 182),
+                    () -> new BookingForm().setVisible(true)));
+
+            grid.add(makeCard("💳  Payments",
+                    "Record & view payments",
+                    new Color(230, 126, 34),
+                    () -> new PaymentForm().setVisible(true)));
+
+            grid.add(makeCard("👥  Staff",
+                    "Manage staff members",
+                    new Color(231, 76, 60),
+                    () -> new StaffForm().setVisible(true)));
+
+            grid.add(makeCard("📊  Reports",
+                    "Export system reports",
+                    new Color(22, 160, 133),
+                    () -> new ReportsForm().setVisible(true)));
+        }
+
         JPanel statusBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
         statusBar.setBackground(new Color(220, 225, 235));
         statusBar.setBorder(BorderFactory.createEmptyBorder(4, 10, 4, 10));
+
         JLabel status = new JLabel("Connected to server  |  Ready");
         status.setForeground(Color.DARK_GRAY);
         status.setFont(new Font("SansSerif", Font.PLAIN, 11));
@@ -85,12 +129,11 @@ public class MainDashboard extends JFrame {
         JPanel card = new JPanel(new BorderLayout());
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(220, 225, 235), 1, true),
-            BorderFactory.createEmptyBorder(20, 20, 20, 20)
+                BorderFactory.createLineBorder(new Color(220, 225, 235), 1, true),
+                BorderFactory.createEmptyBorder(20, 20, 20, 20)
         ));
         card.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        // Accent stripe
         JPanel stripe = new JPanel();
         stripe.setBackground(accent);
         stripe.setPreferredSize(new Dimension(0, 5));
@@ -126,11 +169,18 @@ public class MainDashboard extends JFrame {
         card.add(text, BorderLayout.CENTER);
         card.add(bottom, BorderLayout.SOUTH);
 
-        // Hover highlight
         card.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent e) { card.setBackground(new Color(248, 250, 255)); }
-            public void mouseExited(java.awt.event.MouseEvent e)  { card.setBackground(Color.WHITE); }
-            public void mouseClicked(java.awt.event.MouseEvent e) { action.run(); }
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                card.setBackground(new Color(248, 250, 255));
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                card.setBackground(Color.WHITE);
+            }
+
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                action.run();
+            }
         });
 
         return card;
